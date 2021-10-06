@@ -108,23 +108,13 @@ void loop()
   
 //suhu
     suhu_ukur();
-//    Serial.println(" Nilai suhu : "+ String(suhu)); 
-//    Serial.println("==============");
     
         
 //ph
     nilai_analog_PH = analogRead(ph_Pin);
-  //  Serial.print("Nilai ADC Ph: ");
-  //  Serial.println(nilai_analog_PH);
-      TeganganPh = 3.3 / 1024.0 * nilai_analog_PH;
-  //  Serial.print("TeganganPh: ");
-  //  Serial.println(TeganganPh, 3);
-  
+    TeganganPh = 3.3 / 1024.0 * nilai_analog_PH;
     PH_step = (PH4 - PH7) / 3;
     Po = 7.00 + ((PH7 - TeganganPh) / PH_step);     //Po = 7.00 + ((teganganPh7 - TeganganPh) / PhStep);
-//    Serial.print("Nilai PH cairan: ");
-//    Serial.println(Po, 2);
-//    Serial.println("==============");
 
  //kekeruhan
     double kekeruhan = 0;
@@ -159,10 +149,8 @@ void loop()
 
     // Set output vlaue: pengurasan
     ys = g_fisOutput[0];
-
-//     Serial.println("==================");
-//     Serial.println(ys);
-      if(counter%5==0){
+    
+    if(counter%5==0){
         Serial.print("ph=");
         Serial.print(String(Po));
         Serial.print("&");
@@ -174,20 +162,17 @@ void loop()
         Serial.print("&");
         Serial.print("tinggi=");
         Serial.print(String(percentage));
-      }
+    }
 
-      tampilan();
+    tampilan();
       
 //logic fuzzy kekeruhan & pH
     if (ys >= 0 && ys < 30) { // if either x or y is greater than zero (0-29)
-//      Serial.println("pengurasan 0%");
       lcd.setCursor(0,0);
       lcd.print("Kuras:0%");
       delay(10000);
     }
     else if (ys >= 30 && ys < 50) { // if either x or y is greater than zero (30-49)
-//      Serial.println("pengurasan 30%");
-
       while(jarak < 8){
         digitalWrite(rlyPk, LOW); 
         lcd.setCursor(0,0);
@@ -196,25 +181,23 @@ void loop()
         lcd.print("T.Air:" + String(percentage) +"%");
         ultrasonik();
         delay(100);
-       }
+      }
                 
       if (jarak == 8) {
+        digitalWrite(rlyPk, HIGH);
         lcd.setCursor(0,0);
         lcd.print("Kuras:30%"); 
-  
-        digitalWrite(rlyPk, HIGH);
+        lcd.setCursor(0,1);
+        lcd.print("T.Air:" + String(percentage) +"%");
         delay(5000);
         lcd.clear();
         lcd.setCursor(0,0);
         lcd.print("Kuras sukses");
-
-        delay(5000);
-        digitalWrite(rlyPm, LOW);
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
-       }
-        
-        
+        delay(5000);
+        digitalWrite(rlyPm, LOW); 
+      }
       while(jarak > 2){
         ultrasonik();
         lcd.setCursor(0,1);
@@ -225,7 +208,6 @@ void loop()
         lcd.clear();
         lcd.setCursor(0,0);
         lcd.print("Pengisian sukses");
-//        Serial.println("air penuh");
         digitalWrite(rlyPm, HIGH);
         delay(10000);
       }
@@ -240,22 +222,24 @@ void loop()
         lcd.print("T.Air:" + String(percentage) +"%");
         ultrasonik();
         delay(100);
-        }
+      }
                 
         if (jarak == 12) {
-        lcd.setCursor(0,0);
-        lcd.print("Kuras:50%"); 
-//        Serial.println("pengurasan 50% selesai");
-        digitalWrite(rlyPk, HIGH);
-        delay(5000);
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("Kuras sukses");
-        delay(5000);
-        digitalWrite(rlyPm, LOW);
-        lcd.setCursor(0,1);
-        lcd.print("T.Air:" + String(percentage) +"%");
-       }
+          digitalWrite(rlyPk, HIGH);
+          lcd.setCursor(0,0);
+          lcd.print("Kuras:50%"); 
+          lcd.setCursor(0,1);
+          lcd.print("T.Air:" + String(percentage) +"%");
+          delay(5000);
+          lcd.clear();
+          lcd.setCursor(0,0);
+          lcd.print("Kuras sukses");
+          lcd.setCursor(0,1);
+          lcd.print("T.Air:" + String(percentage) +"%");
+          delay(5000);
+          digitalWrite(rlyPm, LOW);
+          
+        }
         
         
       while(jarak > 2){
@@ -268,7 +252,6 @@ void loop()
         lcd.clear();
         lcd.setCursor(0,0);
         lcd.print("Pengisian sukses");
-//        Serial.println("air penuh");
         digitalWrite(rlyPm, HIGH);
         delay(10000);
       }
@@ -277,42 +260,34 @@ void loop()
       
 //logic suhu
     if(suhu >= 0 && suhu < 23) { // if either x or y is greater than zero
-//      Serial.println("dingin heater nyala");
       while(suhu < 23) {
         lcd.setCursor(0,0);
         lcd.print("Heater:On");
         lcd.setCursor(0,1);
         lcd.print("Suhu:"+String(suhu)+" C");
         digitalWrite(rlyHt, LOW);
-        delay (5000);
-        tampilan();
+        delay (100);
         suhu_ukur();
-         }
+        }
     }
     else if(suhu >= 23 && suhu < 27) { // if either x or y is greater than zero
-//      Serial.println("optimal mati semua");
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Suhu optimal");
       lcd.setCursor(0,1);
       lcd.print("Suhu:"+String(suhu)+" C");
-      delay (10000);
-      tampilan();
+      delay (100);
     }
     else { // if either x or y is greater than zero
-//      Serial.println("panas kipas nyala");
       while(suhu >= 27) {
         lcd.setCursor(0,0);
         lcd.print("Kipas:On");
         lcd.setCursor(0,1);
         lcd.print("Suhu:"+String(suhu)+" C");
         digitalWrite(rlyKp, LOW);
-        delay(10000);
-        tampilan(); 
+        delay(100);
         suhu_ukur();
-      
-        }
-        
+      }   
     }
     counter+=1;
 }
