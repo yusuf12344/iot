@@ -37,6 +37,9 @@ int echo = 10;
 int trig = 9;
 long durasi, jarak;
 
+//deklare history
+String status_kuras, status_suhu;
+
 //deklarasi persentase tinggi air
   int percentage;
 
@@ -105,6 +108,9 @@ void loop()
     digitalWrite(rlyHt , HIGH);
     digitalWrite(rlyPu , HIGH);
     digitalWrite(rlyPd , HIGH);
+// history
+  status_kuras="optimal";
+  status_suhu="optimal";
   
 //suhu
     suhu_ukur();
@@ -149,23 +155,7 @@ void loop()
 
     // Set output vlaue: pengurasan
     ys = g_fisOutput[0];
-    
-    if(counter%5==0){
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
-    }
-
-    tampilan();
-      
+    tampilan();      
 //logic fuzzy kekeruhan & pH
     if (ys >= 0 && ys < 30) { // if either x or y is greater than zero (0-29)
       lcd.setCursor(0,0);
@@ -173,6 +163,7 @@ void loop()
       delay(10000);
     }
     else if (ys >= 30 && ys < 50) { // if either x or y is greater than zero (30-49)
+      status_kuras= "30%";
       while(jarak < 8){
         digitalWrite(rlyPk, LOW); 
         lcd.setCursor(0,0);
@@ -213,7 +204,7 @@ void loop()
       }
     }
     else { // if either x or y is greater than zero
-
+      status_kuras= "50%";
       while(jarak < 12){
         digitalWrite(rlyPk, LOW); 
         lcd.setCursor(0,0);
@@ -260,6 +251,7 @@ void loop()
       
 //logic suhu
     if(suhu >= 0 && suhu < 23) { // if either x or y is greater than zero
+      status_suhu="Heater_On";
       while(suhu < 23) {
         lcd.setCursor(0,0);
         lcd.print("Heater:On");
@@ -279,6 +271,7 @@ void loop()
       delay (100);
     }
     else { // if either x or y is greater than zero
+      status_suhu="Kipas_On";
       while(suhu >= 27) {
         lcd.setCursor(0,0);
         lcd.print("Kipas:On");
@@ -288,6 +281,26 @@ void loop()
         delay(100);
         suhu_ukur();
       }   
+    }
+       
+    if(counter%5==0){
+        Serial.print("ph=");
+        Serial.print(String(Po));
+        Serial.print("&");
+        Serial.print("suhu=");
+        Serial.print(String(suhu));
+        Serial.print("&");
+        Serial.print("kekeruhan=");
+        Serial.print(String(kekeruhanFix));
+        Serial.print("&");
+        Serial.print("tinggi=");
+        Serial.print(String(percentage));
+        Serial.print("&");
+        Serial.print("status_kuras=");
+        Serial.print(status_kuras);
+        Serial.print("&");
+        Serial.print("status_suhu=");
+        Serial.print(status_suhu);
     }
     counter+=1;
 }
