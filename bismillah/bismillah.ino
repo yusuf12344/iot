@@ -21,6 +21,9 @@ DallasTemperature sensors(&oneWire);
 //deklare variabel output fuzzy
 float ys;
 
+//counter
+int counter=0;
+
 //deklare relay
 int rlyPm = 2;
 int rlyPk = 3;
@@ -159,17 +162,19 @@ void loop()
 
 //     Serial.println("==================");
 //     Serial.println(ys);
-      Serial.print("ph=");
-      Serial.print(String(Po));
-      Serial.print("&");
-      Serial.print("suhu=");
-      Serial.print(String(suhu));
-      Serial.print("&");
-      Serial.print("kekeruhan=");
-      Serial.print(String(kekeruhanFix));
-      Serial.print("&");
-      Serial.print("tinggi=");
-      Serial.print(String(percentage));
+      if(counter%5==0){
+        Serial.print("ph=");
+        Serial.print(String(Po));
+        Serial.print("&");
+        Serial.print("suhu=");
+        Serial.print(String(suhu));
+        Serial.print("&");
+        Serial.print("kekeruhan=");
+        Serial.print(String(kekeruhanFix));
+        Serial.print("&");
+        Serial.print("tinggi=");
+        Serial.print(String(percentage));
+      }
 
       tampilan();
       
@@ -189,19 +194,8 @@ void loop()
         lcd.print("Kuras:30%");
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
         ultrasonik();
-        delay(2000);
+        delay(100);
        }
                 
       if (jarak == 8) {
@@ -225,18 +219,7 @@ void loop()
         ultrasonik();
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
-        delay(2000);
+        delay(100);
       }
       if (jarak == 2) {
         lcd.clear();
@@ -255,19 +238,8 @@ void loop()
         lcd.print("Kuras:50%");
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
         ultrasonik();
-        delay(2000);
+        delay(100);
         }
                 
         if (jarak == 12) {
@@ -290,18 +262,7 @@ void loop()
         ultrasonik();
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
-        delay(2000);
+        delay(100);
       }
       if (jarak == 2) {
         lcd.clear();
@@ -322,17 +283,6 @@ void loop()
         lcd.print("Heater:On");
         lcd.setCursor(0,1);
         lcd.print("Suhu:"+String(suhu)+" C");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
         digitalWrite(rlyHt, LOW);
         delay (5000);
         tampilan();
@@ -356,17 +306,6 @@ void loop()
         lcd.print("Kipas:On");
         lcd.setCursor(0,1);
         lcd.print("Suhu:"+String(suhu)+" C");
-        Serial.print("ph=");
-        Serial.print(String(Po));
-        Serial.print("&");
-        Serial.print("suhu=");
-        Serial.print(String(suhu));
-        Serial.print("&");
-        Serial.print("kekeruhan=");
-        Serial.print(String(kekeruhanFix));
-        Serial.print("&");
-        Serial.print("tinggi=");
-        Serial.print(String(percentage));
         digitalWrite(rlyKp, LOW);
         delay(10000);
         tampilan(); 
@@ -375,7 +314,7 @@ void loop()
         }
         
     }
-  
+    counter+=1;
 }
 
 // class ultrasonik
