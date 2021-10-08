@@ -37,6 +37,9 @@ int echo = 10;
 int trig = 9;
 long durasi, jarak;
 
+//deklar user
+int user_id=1;
+
 //deklare history
 String status_kuras, status_suhu;
 
@@ -109,7 +112,7 @@ void loop()
     digitalWrite(rlyPu , HIGH);
     digitalWrite(rlyPd , HIGH);
 // history
-  status_kuras="optimal";
+  status_kuras="pengurasan 0%";
   status_suhu="optimal";
   
 //suhu
@@ -120,8 +123,7 @@ void loop()
     nilai_analog_PH = analogRead(ph_Pin);
     TeganganPh = 3.3 / 1024.0 * nilai_analog_PH;
     PH_step = (PH4 - PH7) / 3;
-    Po = 7.00 + ((PH7 - TeganganPh) / PH_step);     //Po = 7.00 + ((teganganPh7 - TeganganPh) / PhStep);
-
+    Po = 7.00 + ((PH7 - TeganganPh) / PH_step);
  //kekeruhan
     double kekeruhan = 0;
     double kekeruhanTotal = 0;
@@ -138,16 +140,16 @@ void loop()
     ultrasonik();
 
 //    demo testing
-//    double Po1 = 7;
-//    double kekeruhanFix1 = 50;
-//    double suhu1 = 24;
+    double Po1 = 9;
+    double kekeruhanFix1 = 350;
+    double suhu1 = 25;
 //    long jarak1 = 2;
 //
     
     // Read Input: pH
-    g_fisInput[0] = Po ;
+    g_fisInput[0] = Po1 ;
     // Read Input: kekeruhan
-    g_fisInput[1] = kekeruhanFix ;
+    g_fisInput[1] = kekeruhanFix1 ;
 
     g_fisOutput[0] = 0;
 
@@ -156,14 +158,25 @@ void loop()
     // Set output vlaue: pengurasan
     ys = g_fisOutput[0];
     tampilan();      
+    
 //logic fuzzy kekeruhan & pH
     if (ys >= 0 && ys < 30) { // if either x or y is greater than zero (0-29)
       lcd.setCursor(0,0);
       lcd.print("Kuras:0%");
-      delay(10000);
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Pompa Kuras dan Pompa masuk Off");
+      delay(5000);
     }
     else if (ys >= 30 && ys < 50) { // if either x or y is greater than zero (30-49)
-      status_kuras= "30%";
+      status_kuras= "pengurasan 30%";
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Pompa Kuras On");
       while(jarak < 8){
         digitalWrite(rlyPk, LOW); 
         lcd.setCursor(0,0);
@@ -176,6 +189,11 @@ void loop()
                 
       if (jarak == 8) {
         digitalWrite(rlyPk, HIGH);
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
+        Serial.print("aktuator=");
+        Serial.print("Pompa Kuras Off");
         lcd.setCursor(0,0);
         lcd.print("Kuras:30%"); 
         lcd.setCursor(0,1);
@@ -187,7 +205,13 @@ void loop()
         lcd.setCursor(0,1);
         lcd.print("T.Air:" + String(percentage) +"%");
         delay(5000);
-        digitalWrite(rlyPm, LOW); 
+        
+        digitalWrite(rlyPm, LOW);
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
+        Serial.print("aktuator=");
+        Serial.print("Pompa Masuk On"); 
       }
       while(jarak > 2){
         ultrasonik();
@@ -200,11 +224,21 @@ void loop()
         lcd.setCursor(0,0);
         lcd.print("Pengisian sukses");
         digitalWrite(rlyPm, HIGH);
-        delay(10000);
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
+        Serial.print("aktuator=");
+        Serial.print("Pompa Masuk Off");
+        delay(5000);
       }
     }
     else { // if either x or y is greater than zero
-      status_kuras= "50%";
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Pompa Kuras On");
+      status_kuras= "pengurasan 50%";
       while(jarak < 12){
         digitalWrite(rlyPk, LOW); 
         lcd.setCursor(0,0);
@@ -217,6 +251,11 @@ void loop()
                 
         if (jarak == 12) {
           digitalWrite(rlyPk, HIGH);
+          Serial.print("user_id=");
+          Serial.print(String(user_id));
+          Serial.print("&");
+          Serial.print("aktuator=");
+          Serial.print("Pompa Kuras Off");
           lcd.setCursor(0,0);
           lcd.print("Kuras:50%"); 
           lcd.setCursor(0,1);
@@ -229,6 +268,11 @@ void loop()
           lcd.print("T.Air:" + String(percentage) +"%");
           delay(5000);
           digitalWrite(rlyPm, LOW);
+          Serial.print("user_id=");
+          Serial.print(String(user_id));
+          Serial.print("&");
+          Serial.print("aktuator=");
+          Serial.print("Pompa Masuk On");
           
         }
         
@@ -244,15 +288,25 @@ void loop()
         lcd.setCursor(0,0);
         lcd.print("Pengisian sukses");
         digitalWrite(rlyPm, HIGH);
-        delay(10000);
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
+        Serial.print("aktuator=");
+        Serial.print("Pompa Masuk Off");
+        delay(5000);
       }
     }
 
       
 //logic suhu
-    if(suhu >= 0 && suhu < 23) { // if either x or y is greater than zero
-      status_suhu="Heater_On";
-      while(suhu < 23) {
+    if(suhu1 >= 0 && suhu1 < 23) { // if either x or y is greater than zero
+      status_suhu="Dingin";
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Heater On");
+      while(suhu1 < 23) {
         lcd.setCursor(0,0);
         lcd.print("Heater:On");
         lcd.setCursor(0,1);
@@ -261,18 +315,35 @@ void loop()
         delay (100);
         suhu_ukur();
         }
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
+        Serial.print("aktuator=");
+        Serial.print("Heater Off");
+        delay(5000);
     }
-    else if(suhu >= 23 && suhu < 27) { // if either x or y is greater than zero
+    else if(suhu1 >= 23 && suhu1 < 27) { // if either x or y is greater than zero
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Suhu optimal");
       lcd.setCursor(0,1);
       lcd.print("Suhu:"+String(suhu)+" C");
-      delay (100);
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Heater dan Kipas Off");
+      delay (5000);
+      
     }
     else { // if either x or y is greater than zero
-      status_suhu="Kipas_On";
-      while(suhu >= 27) {
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Kipas On");
+      status_suhu="Panas";
+      while(suhu1 >= 27) {
         lcd.setCursor(0,0);
         lcd.print("Kipas:On");
         lcd.setCursor(0,1);
@@ -281,11 +352,20 @@ void loop()
         delay(100);
         suhu_ukur();
       }   
+      Serial.print("user_id=");
+      Serial.print(String(user_id));
+      Serial.print("&");
+      Serial.print("aktuator=");
+      Serial.print("Kipas Off");
+      delay(5000);
     }
        
-    if(counter%5==0){
+    if(counter%3==0){
+        Serial.print("user_id=");
+        Serial.print(String(user_id));
+        Serial.print("&");
         Serial.print("ph=");
-        Serial.print(String(Po));
+        Serial.print(String(Po1));
         Serial.print("&");
         Serial.print("suhu=");
         Serial.print(String(suhu));
@@ -301,6 +381,7 @@ void loop()
         Serial.print("&");
         Serial.print("status_suhu=");
         Serial.print(status_suhu);
+        delay(1000);
     }
     counter+=1;
 }
