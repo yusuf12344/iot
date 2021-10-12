@@ -1,4 +1,4 @@
-#include <OneWire.h>
+  #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
@@ -140,16 +140,16 @@ void loop()
     ultrasonik();
 
 //    demo testing
-    double Po1 = 9;
-    double kekeruhanFix1 = 350;
-    double suhu1 = 25;
+//    double Po1 = 9;
+//    double kekeruhanFix1 = 350;
+//    double suhu1 = 25;
 //    long jarak1 = 2;
 //
     
     // Read Input: pH
-    g_fisInput[0] = Po1 ;
+    g_fisInput[0] = Po ;
     // Read Input: kekeruhan
-    g_fisInput[1] = kekeruhanFix1 ;
+    g_fisInput[1] = kekeruhanFix ;
 
     g_fisOutput[0] = 0;
 
@@ -299,14 +299,15 @@ void loop()
 
       
 //logic suhu
-    if(suhu1 >= 0 && suhu1 < 23) { // if either x or y is greater than zero
+    if(suhu >= 0 && suhu < 23) { // if either x or y is greater than zero
       status_suhu="Dingin";
       Serial.print("user_id=");
       Serial.print(String(user_id));
       Serial.print("&");
       Serial.print("aktuator=");
       Serial.print("Heater On");
-      while(suhu1 < 23) {
+      lcd.clear();
+      while(suhu < 23) {
         lcd.setCursor(0,0);
         lcd.print("Heater:On");
         lcd.setCursor(0,1);
@@ -322,7 +323,7 @@ void loop()
         Serial.print("Heater Off");
         delay(5000);
     }
-    else if(suhu1 >= 23 && suhu1 < 27) { // if either x or y is greater than zero
+    else if(suhu >= 23 && suhu < 27) { // if either x or y is greater than zero
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Suhu optimal");
@@ -343,7 +344,7 @@ void loop()
       Serial.print("aktuator=");
       Serial.print("Kipas On");
       status_suhu="Panas";
-      while(suhu1 >= 27) {
+      while(suhu >= 27) {
         lcd.setCursor(0,0);
         lcd.print("Kipas:On");
         lcd.setCursor(0,1);
@@ -365,7 +366,7 @@ void loop()
         Serial.print(String(user_id));
         Serial.print("&");
         Serial.print("ph=");
-        Serial.print(String(Po1));
+        Serial.print(String(Po));
         Serial.print("&");
         Serial.print("suhu=");
         Serial.print(String(suhu));
