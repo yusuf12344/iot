@@ -361,7 +361,7 @@ void loop()
       delay(5000);
     }
        
-    if(counter%3==0){
+    if(counter%2==0){
         Serial.print("user_id=");
         Serial.print(String(user_id));
         Serial.print("&");
